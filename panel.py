@@ -111,7 +111,7 @@ LINK_PAGE = """<!doctype html><html lang=ru><head>
 <h1 style="justify-content:center">{{ name or "Пользователь" }}</h1>
 <div class=dim>{{ ip }}</div>
 <div class=card>
-<div class=dim>Наведи камеру айфона на QR — или скопируй ссылку и вставь в приложении:<br>Settings → Import from connection link</div>
+<div class=dim>Наведи камеру айфона на QR — или скопируй ссылку и вставь в приложении:<br>Settings → Import from connection link<br><br>🛡 Для надёжности создай свой вечный звонок: Settings → Use VK account (cookie) auth → Get VK call URL</div>
 <img class=qr src="/qr/{{ ip }}.png" alt=qr>
 <textarea readonly id=lnk onclick="this.select()">{{ link }}</textarea>
 <button style="width:100%" onclick="navigator.clipboard.writeText(document.getElementById('lnk').value);this.textContent='✅ Скопировано'">📋 Скопировать ссылку</button>

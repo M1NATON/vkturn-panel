@@ -124,7 +124,7 @@ def normalize_call_link(text):
 
 def refresh_link_pool(old_link, pool_str):
     """Та же ссылка пользователя, но со свежим пулом звонков внутри.
-    Ключи и tunnel IP не меняются — на сервере ничего трогать не нужно."""
+    Ключи и tunnel IP не меняются — сервер трогать не нужно."""
     try:
         data = old_link.split("data=", 1)[1]
         payload = json.loads(base64.b64decode(data).decode())
@@ -138,7 +138,7 @@ def refresh_link_pool(old_link, pool_str):
 def refresh_all_user_links(cfg):
     """Переписывает сохранённые ссылки юзеров под текущий пул звонков.
     Возвращает число обновлённых. Приложение пользователя само не обновится —
-    человеку надо заново импортировать ссылку (в боте: «🔑 Мой доступ» ещё раз)."""
+    человеку надо заново импортировать ссылку (один тап)."""
     pool = vk_links_value(cfg)
     if not pool:
         return 0
@@ -157,8 +157,7 @@ def refresh_all_user_links(cfg):
 
 def add_link_to_pool(link):
     """Добавить звонок первым в пул, укоротить пул до target,
-    обновить сохранённые ссылки всех юзеров.
-    Возвращает (размер пула, сколько ссылок обновлено)."""
+    обновить ссылки всех юзеров. Возвращает (размер пула, сколько ссылок обновлено)."""
     cfg = load_config()
     with locked():
         links = cfg.get("vk_links") or []

@@ -1,4 +1,4 @@
-"""Общая логика: ключи WireGuard, правка wg0.conf, генерация ссылок vkturnproxy://"""
+"""Общая логика: ключи WireGuard, правка wg0.conf, ссылки vkturnproxy://, пул звонков."""
 import base64
 import fcntl
 import json
@@ -116,6 +116,64 @@ def build_link(cfg, private_key, tunnel_address):
     return f"vkturnproxy://import?data={data}"
 
 
+def normalize_call_link(text):
+    """Вытащить ссылку на звонок VK из произвольного текста (или None)."""
+    m = re.search(r"https?://(?:vk\.ru|vk\.com|vk\.me)/call/join/\S+", text or "")
+    return m.group(0).rstrip(".,)") if m else None
+
+
+def refresh_link_pool(old_link, pool_str):
+    """Та же ссылка пользователя, но со свежим пулом звонков внутри.
+    Ключи и tunnel IP не меняются — на сервере ничего трогать не нужно."""
+    try:
+        data = old_link.split("data=", 1)[1]
+        payload = json.loads(base64.b64decode(data).decode())
+        payload["settings"]["vkLink"] = pool_str
+        blob = base64.b64encode(json.dumps(payload).encode()).decode()
+        return "vkturnproxy://import?data=" + blob
+    except Exception:
+        return old_link
+
+
+def refresh_all_user_links(cfg):
+    """Переписывает сохранённые ссылки юзеров под текущий пул звонков.
+    Возвращает число обновлённых. Приложение пользователя само не обновится —
+    человеку надо заново импортировать ссылку (в боте: «🔑 Мой доступ» ещё раз)."""
+    pool = vk_links_value(cfg)
+    if not pool:
+        return 0
+    users = load_users()
+    n = 0
+    for u in users.values():
+        if u.get("link"):
+            new = refresh_link_pool(u["link"], pool)
+            if new != u["link"]:
+                u["link"] = new
+                n += 1
+    if n:
+        save_users(users)
+    return n
+
+
+def add_link_to_pool(link):
+    """Добавить звонок первым в пул, укоротить пул до target,
+    обновить сохранённые ссылки всех юзеров.
+    Возвращает (размер пула, сколько ссылок обновлено)."""
+    cfg = load_config()
+    with locked():
+        links = cfg.get("vk_links") or []
+        if isinstance(links, str):
+            links = [links]
+        if link in links:
+            links.remove(link)
+        links = [link] + links
+        target = max(1, int(cfg.get("vk_links_target", 3)))
+        cfg["vk_links"] = links[:target]
+        save_config(cfg)
+        refreshed = refresh_all_user_links(cfg)
+        return len(cfg["vk_links"]), refreshed
+
+
 def load_users():
     if os.path.exists(USERS_PATH):
         with open(USERS_PATH) as f:
@@ -149,6 +207,7 @@ def add_peer(name, created_by="panel"):
             "created_by": created_by, "created_at": int(__import__("time").time()),
         }
         save_users(users)
+        refresh_all_user_links(cfg)  # пул мог обновиться — освежим остальные ссылки
         return {"ip": ip, "public_key": pub, "link": link, "name": name}
 
 

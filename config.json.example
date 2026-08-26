@@ -1,0 +1,21 @@
+{
+  "wg_conf": "/etc/wireguard/wg0.conf",
+  "wg_interface": "wg0",
+  "subnet": "10.8.0",
+  "subnet_mask": 24,
+  "server_public_key": "C0FaW+3PL3vX19K3cTlInrbBGnEoYMJw47CJrXCPFhE=",
+  "peer_address": "ПУБЛИЧНЫЙ_IP:56000",
+  "vk_access_token": "",
+  "vk_links_target": 3,
+  "vk_links": [
+    "https://vk.ru/call/join/tP_X9DFjb8gScKG3NDLx4WIcA4woquxml-GJhp0LFenE"
+  ],
+  "dns_servers": "1.1.1.1",
+  "num_connections": 30,
+  "use_srtp": true,
+  "testflight_url": "https://testflight.apple.com/join/ANm6cmDv",
+  "panel_password": "СМЕНИ_ПАРОЛЬ",
+  "panel_port": 8808,
+  "bot_token": "",
+  "admin_ids": []
+}

@@ -355,6 +355,16 @@ async def cmd_revoke(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Ошибка: {e}")
 
 
+async def on_error(update, ctx):
+    """Не молчим при ошибках — пишем в чат, что сломалось."""
+    logging.exception("handler error: %s", ctx.error)
+    try:
+        if update and getattr(update, "effective_message", None):
+            await update.effective_message.reply_text(f"⚠️ Ошибка: {ctx.error}")
+    except Exception:
+        pass
+
+
 def main():
     token = cfg().get("bot_token", "")
     if not token:
@@ -366,6 +376,7 @@ def main():
     app.add_handler(CommandHandler("revoke", cmd_revoke))
     app.add_handler(CallbackQueryHandler(on_button))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, on_text))
+    app.add_error_handler(on_error)
     app.run_polling()
 
 

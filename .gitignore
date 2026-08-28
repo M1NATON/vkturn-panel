@@ -3,3 +3,11 @@ __pycache__/
 config.json
 users.json
 .lock
+venv/
+.venv/
+*.log
+*.zip
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

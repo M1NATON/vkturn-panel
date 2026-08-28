@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Bash: синтаксис установщиков"
+        run: bash -n install.sh install-server.sh install-full.sh
+
+      - name: Shellcheck (только ошибки)
+        run: shellcheck -S error install.sh install-server.sh install-full.sh
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Зависимости
+        run: pip install -q -r requirements.txt
+
+      - name: "Python: компиляция и импорты"
+        run: |
+          python -m compileall -q core.py panel.py bot.py vkcalls.py
+          python -c "import core, vkcalls"
+          python -c "import panel, bot"
+
+      - name: config.json.example — валидный JSON
+        run: python -c "import json; json.load(open('config.json.example'))"

@@ -4,3 +4,11 @@ config.json
 users.json
 .lock
 .freebuff
+venv/
+.venv/
+*.log
+*.zip
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

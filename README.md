@@ -10,8 +10,9 @@
 ## Установка (на сервере, от root)
 
 ```bash
-unzip vkturn-panel.zip
-cd vkturn-panel
+# репозиторий приватный — подставь свой PAT (Settings → Developer settings → Tokens)
+git clone https://<TOKEN>@github.com/M1NATON/vkturn-panel.git /apps/vkturn-panel
+cd /apps/vkturn-panel
 ```
 
 Дальше — один из трёх сценариев:
@@ -111,12 +112,8 @@ API, живут бессрочно, а созданные руками в бра
 Код живёт в приватном репозитории: https://github.com/M1NATON/vkturn-panel
 
 ```bash
-# первый раз на сервере
-git clone https://github.com/M1NATON/vkturn-panel.git ~/vkturn-panel
-cd ~/vkturn-panel && bash install.sh
-
 # обновления
-cd ~/vkturn-panel && git pull && bash install.sh
+cd /apps/vkturn-panel && git pull && bash install.sh
 systemctl restart vkturn-panel vkturn-bot
 ```
 
@@ -143,6 +140,6 @@ Tokens) прямо в URL:
 | `DEPLOY_SSH_KEY` | Приватный ключ OpenSSH (публичный — в `/root/.ssh/authorized_keys` на сервере) |
 | `DEPLOY_PORT` | Порт SSH, если нестандартный (иначе не задавать) |
 
-Репозиторий на сервере должен лежать в `~/vkturn-panel` (клон с PAT-токеном,
+Репозиторий на сервере должен лежать в `/apps/vkturn-panel` (клон с PAT-токеном,
 см. раздел выше). Пока секреты не заданы, deploy-джоба просто упадёт — это
 не влияет ни на что остальное.

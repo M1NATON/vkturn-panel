@@ -3,6 +3,7 @@ __pycache__/
 config.json
 users.json
 .lock
+.freebuff
 venv/
 .venv/
 *.log

@@ -48,6 +48,11 @@ step "2/3 vk-turn-proxy"
 if systemctl cat vk-turn-proxy.service >/dev/null 2>&1; then
   echo "  vk-turn-proxy.service уже есть — пропускаю"
 else
+  # curl нужен и когда WG-шаг был пропущен (уже стоял)
+  if ! command -v curl >/dev/null 2>&1; then
+    apt-get update && apt-get install -y curl
+  fi
+
   if [ ! -x /opt/vk-turn-proxy/server ]; then
     case "$(uname -m)" in
       x86_64)  ARCH=amd64 ;;

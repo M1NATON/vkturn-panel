@@ -1,4 +1,4 @@
-"""Telegram-бот v3: постоянная панель кнопок, QR по запросу, свои звонки юзеров."""
+"""Telegram-бот: постоянная панель кнопок, QR по запросу, свои звонки юзеров."""
 import io
 import logging
 import time
@@ -24,33 +24,33 @@ import vkcalls
 
 logging.basicConfig(level=logging.INFO)
 
-BTN_ACCESS = "🔑 Мой доступ"
-BTN_HELP = "📱 Инструкция"
-BTN_STATUS = "🔄 Мой статус"
-BTN_ADMIN = "👑 Админка"
+BTN_ACCESS = "Мой доступ"
+BTN_HELP = "Инструкция"
+BTN_STATUS = "Мой статус"
+BTN_ADMIN = "Админка"
 
-WELCOME = """
-🛰 <b>VPN через ВК-звонки</b>
+WELCOME = """<b>VPN через ВК-звонки</b>
 
-Работает, даже когда остальное заблокировано: трафик идёт через звонки VK.
-Кнопки всегда внизу экрана 👇
+Работает даже тогда, когда остальное заблокировано: трафик идёт через звонки VK.
+Кнопки закреплены внизу экрана.
+
+Разработчик: @M1NATON
 """
 
-INSTRUCTION = """
-📱 <b>Как подключиться:</b>
+INSTRUCTION = """<b>Как подключиться:</b>
 
 1. Установи <b>TestFlight</b> из App Store
 2. Скопируй эту ссылку и открой её в <b>Safari</b> (вставь в адресную строку): {tf}
-   → откроется страница приложения → <b>Start Testing / Accept</b> → Install
-3. Нажми «🔑 Мой доступ» внизу экрана и скопируй ссылку
+   Откроется страница приложения → <b>Start Testing / Accept</b> → Install
+3. Нажми «Мой доступ» внизу экрана и скопируй ссылку
 4. В приложении: Settings → Import from connection link → вставь
 5. Нажми <b>Connect</b>
 
-🛡 <b>Создай свой звонок</b> (1 раз, живёт вечно):
+<b>Свой звонок</b> (создаётся один раз, живёт бессрочно):
 6. В приложении: Settings → включи <b>Use VK account (cookie) auth</b> → войди в ВК
 7. Нажми <b>Get VK call URL</b> — твой звонок встанет первым в списке
 
-После этого ты работаешь через собственный звонок и ни от чего не зависишь.
+После этого работаешь через собственный звонок и ни от чего не зависишь.
 """
 
 
@@ -79,10 +79,10 @@ def main_rkb(admin=False):
 
 def admin_kb():
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("👥 Пользователи", callback_data="a_users")],
-        [InlineKeyboardButton("📞 Добавить звонок", callback_data="a_addlink")],
-        [InlineKeyboardButton("⚡ Авто-звонок (токен)", callback_data="a_newcall"),
-         InlineKeyboardButton("📊 Статистика", callback_data="a_stats")],
+        [InlineKeyboardButton("Пользователи", callback_data="a_users")],
+        [InlineKeyboardButton("Добавить звонок", callback_data="a_addlink")],
+        [InlineKeyboardButton("Авто-звонок (токен)", callback_data="a_newcall"),
+         InlineKeyboardButton("Статистика", callback_data="a_stats")],
     ])
 
 
@@ -123,10 +123,10 @@ async def do_access(reply, tg, ctx):
     else:
         link = u["link"]
     kb = InlineKeyboardMarkup([[
-        InlineKeyboardButton("📷 Показать QR", callback_data=f"qr:{ip}"),
+        InlineKeyboardButton("Показать QR", callback_data=f"qr:{ip}"),
     ]])
     await reply(
-        ("✅ <b>Доступ готов!</b>" if created else "У тебя уже есть доступ 👌")
+        ("<b>Доступ готов.</b>" if created else "У тебя уже есть доступ.")
         + "\n\nСкопируй ссылку и вставь в приложении: Settings → Import from connection link\n\n"
         + f"<code>{link}</code>",
         parse_mode="HTML",
@@ -137,9 +137,9 @@ async def do_access(reply, tg, ctx):
             try:
                 await ctx.bot.send_message(
                     admin,
-                    f"🆕 Новый пользователь: @{tg.username or tg.id} → {ip}",
+                    f"Новый пользователь: @{tg.username or tg.id} → {ip}",
                     reply_markup=InlineKeyboardMarkup([[
-                        InlineKeyboardButton("❌ Отключить", callback_data=f"revoke:{ip}")
+                        InlineKeyboardButton("Отключить", callback_data=f"revoke:{ip}")
                     ]]),
                 )
             except Exception:
@@ -149,7 +149,7 @@ async def do_access(reply, tg, ctx):
 async def do_status(reply, tg):
     ip, u = find_user(tg.id)
     if not u:
-        await reply("У тебя ещё нет доступа. Жми «🔑 Мой доступ» 👇")
+        await reply("У тебя ещё нет доступа. Нажми «Мой доступ» ниже.")
         return
     peers = {p["ip"]: p for p in core.list_peers()}
     p = peers.get(ip, {})
@@ -158,9 +158,9 @@ async def do_status(reply, tg):
     rx = round((p.get("rx") or 0) / 1e6, 1)
     tx = round((p.get("tx") or 0) / 1e6, 1)
     await reply(
-        f"🔄 <b>Твой статус</b>\n\nIP: <code>{ip}</code>\n"
-        f"Состояние: {'🟢 онлайн' if online else '⚪️ не в сети'}\n"
-        f"Трафик: ⬇ {rx} МБ · ⬆ {tx} МБ",
+        f"<b>Твой статус</b>\n\nIP: <code>{ip}</code>\n"
+        f"Состояние: {'онлайн' if online else 'не в сети'}\n"
+        f"Трафик: {rx} МБ получено · {tx} МБ отправлено",
         parse_mode="HTML",
     )
 
@@ -172,13 +172,13 @@ async def admin_users(q):
         return
     rows = [
         [InlineKeyboardButton(
-            f"❌ {p['ip']} — {p['name'] or 'без имени'}", callback_data=f"revoke:{p['ip']}"
+            f"{p['ip']} — {p['name'] or 'без имени'}", callback_data=f"revoke:{p['ip']}"
         )]
         for p in peers
     ]
     rows.append([InlineKeyboardButton("← Админка", callback_data="a_menu")])
     await q.edit_message_text(
-        "👥 <b>Пользователи</b>\nНажми на пользователя, чтобы отключить:",
+        "<b>Пользователи</b>\nНажми на пользователя, чтобы отключить:",
         parse_mode="HTML",
         reply_markup=InlineKeyboardMarkup(rows),
     )
@@ -187,7 +187,7 @@ async def admin_users(q):
 async def admin_revoke(q, ip):
     try:
         core.remove_peer(ip)
-        await q.edit_message_text(f"✅ {ip} отключён", reply_markup=admin_back_kb())
+        await q.edit_message_text(f"{ip} отключён", reply_markup=admin_back_kb())
     except Exception as e:
         await q.edit_message_text(f"Ошибка: {e}", reply_markup=admin_back_kb())
 
@@ -203,12 +203,12 @@ async def admin_stats(q):
     n_links = len(links) if isinstance(links, list) else (1 if links else 0)
     has_token = bool((c.get("vk_access_token") or "").strip())
     await q.edit_message_text(
-        f"📊 <b>Статистика</b>\n\n"
-        f"👥 Пользователей: {len(peers)}\n"
-        f"🟢 Онлайн сейчас: {online}\n"
-        f"📦 Трафик суммарно: ⬇ {rx / 1e9:.1f} ГБ · ⬆ {tx / 1e9:.1f} ГБ\n"
-        f"📞 Звонков в пуле: {n_links}\n"
-        f"🔑 VK token: {'задан ✅' if has_token else 'не задан ❌'}",
+        f"<b>Статистика</b>\n\n"
+        f"Пользователей: {len(peers)}\n"
+        f"Онлайн сейчас: {online}\n"
+        f"Трафик суммарно: {rx / 1e9:.1f} ГБ получено · {tx / 1e9:.1f} ГБ отправлено\n"
+        f"Звонков в пуле: {n_links}\n"
+        f"VK token: {'задан' if has_token else 'не задан'}",
         parse_mode="HTML",
         reply_markup=admin_back_kb(),
     )
@@ -218,14 +218,14 @@ async def admin_newcall(q):
     fresh = vkcalls.ensure_links(core.load_config(), core.save_config)
     if fresh:
         await q.edit_message_text(
-            f"⚡ Звонок создан и стал первым в пуле:\n<code>{fresh}</code>",
+            f"Звонок создан и стал первым в пуле:\n<code>{fresh}</code>",
             parse_mode="HTML",
             reply_markup=admin_back_kb(),
         )
     else:
         await q.edit_message_text(
             "Не получилось: нет vk_access_token или ошибка ВК.\n"
-            "Можно и вручную — просто пришли ссылку на звонок в этот чат.",
+            "Можно вручную — пришли ссылку на звонок в этот чат.",
             reply_markup=admin_back_kb(),
         )
 
@@ -247,7 +247,7 @@ async def on_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         return
     if text == BTN_ADMIN:
         if is_admin(tg.id):
-            await update.message.reply_text("👑 <b>Админка</b>", parse_mode="HTML", reply_markup=admin_kb())
+            await update.message.reply_text("<b>Админка</b>", parse_mode="HTML", reply_markup=admin_kb())
         return
 
     # Админ прислал ссылку на звонок — добавить в пул
@@ -256,14 +256,14 @@ async def on_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         if link:
             n, refreshed = core.add_link_to_pool(link)
             await update.message.reply_text(
-                f"📞 Звонок добавлен первым в пул (всего {n}).\n"
-                f"Ссылки {refreshed} пользователей обновлены под новый пул — "
-                f"им достаточно переимпортировать ссылку в один тап.",
+                f"Звонок добавлен первым в пул (всего {n}).\n"
+                f"Ссылки {refreshed} пользователей обновлены — "
+                f"им достаточно переимпортировать ссылку в приложении.",
                 reply_markup=admin_back_kb(),
             )
             return
 
-    await update.message.reply_text("Жми кнопки внизу 👇", reply_markup=main_rkb(is_admin(tg.id)))
+    await update.message.reply_text("Используй кнопки ниже.", reply_markup=main_rkb(is_admin(tg.id)))
 
 
 async def on_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -285,9 +285,9 @@ async def on_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             return
         await q.message.reply_photo(
             qr_bytes(link),
-            caption="Наведи камеру айфона 📷",
+            caption="Наведи камеру айфона",
             reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton("🗑 Скрыть QR", callback_data="qr_del")
+                InlineKeyboardButton("Скрыть QR", callback_data="qr_del")
             ]]),
         )
         return
@@ -308,7 +308,7 @@ async def on_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not is_admin(tg.id):
         return
     if data == "a_menu":
-        await q.edit_message_text("👑 <b>Админка</b>", parse_mode="HTML", reply_markup=admin_kb())
+        await q.edit_message_text("<b>Админка</b>", parse_mode="HTML", reply_markup=admin_kb())
     elif data == "a_users":
         await admin_users(q)
     elif data == "a_stats":
@@ -317,8 +317,8 @@ async def on_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await admin_newcall(q)
     elif data == "a_addlink":
         await q.edit_message_text(
-            "📞 Просто пришли в этот чат ссылку на звонок (vk.ru/call/join/…).\n"
-            "Добавлю её первой в пул и обновлю сохранённые ссылки всех пользователей.",
+            "Пришли в этот чат ссылку на звонок (vk.ru/call/join/…).\n"
+            "Она станет первой в пуле, ссылки пользователей обновятся.",
             reply_markup=admin_back_kb(),
         )
     elif data.startswith("revoke:"):
@@ -328,7 +328,7 @@ async def on_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 async def cmd_admin(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not is_admin(update.effective_user.id):
         return
-    await update.message.reply_text("👑 <b>Админка</b>", parse_mode="HTML", reply_markup=admin_kb())
+    await update.message.reply_text("<b>Админка</b>", parse_mode="HTML", reply_markup=admin_kb())
 
 
 async def cmd_users(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -339,7 +339,7 @@ async def cmd_users(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Пользователей нет")
         return
     lines = [f"{p['ip']} — {p['name'] or 'без имени'}" for p in peers]
-    await update.message.reply_text("👥 Пользователи:\n" + "\n".join(lines))
+    await update.message.reply_text("Пользователи:\n" + "\n".join(lines))
 
 
 async def cmd_revoke(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -351,7 +351,7 @@ async def cmd_revoke(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     ip = ctx.args[0]
     try:
         core.remove_peer(ip)
-        await update.message.reply_text(f"✅ {ip} отключён")
+        await update.message.reply_text(f"{ip} отключён")
     except Exception as e:
         await update.message.reply_text(f"Ошибка: {e}")
 
@@ -361,7 +361,7 @@ async def on_error(update, ctx):
     logging.exception("handler error: %s", ctx.error)
     try:
         if update and getattr(update, "effective_message", None):
-            await update.effective_message.reply_text(f"⚠️ Ошибка: {ctx.error}")
+            await update.effective_message.reply_text(f"Ошибка: {ctx.error}")
     except Exception:
         pass
 
@@ -369,7 +369,8 @@ async def on_error(update, ctx):
 def main():
     token = cfg().get("bot_token", "")
     if not token:
-        raise SystemExit("Заполни bot_token в config.json")
+        logging.warning("bot_token не задан в config.json — бот не запущен")
+        return
     app = ApplicationBuilder().token(token).build()
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("admin", cmd_admin))

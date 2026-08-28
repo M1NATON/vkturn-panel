@@ -29,12 +29,15 @@ BTN_HELP = "Инструкция"
 BTN_STATUS = "Мой статус"
 BTN_ADMIN = "Админка"
 
-WELCOME = """<b>VPN через ВК-звонки</b>
+WELCOME = """<b>VPN WhiteList — VPN через ВК-звонки</b>
 
-Работает даже тогда, когда остальное заблокировано: трафик идёт через звонки VK.
-Кнопки закреплены внизу экрана.
+Обход «белых списков»: трафик маскируется под звонки VK, поэтому работает
+даже там, где заблокировано всё остальное. Лучшее решение для обхода
+белых списков.
 
 Разработчик: @M1NATON
+
+Кнопки закреплены внизу экрана.
 """
 
 INSTRUCTION = """<b>Как подключиться:</b>
@@ -51,6 +54,8 @@ INSTRUCTION = """<b>Как подключиться:</b>
 7. Нажми <b>Get VK call URL</b> — твой звонок встанет первым в списке
 
 После этого работаешь через собственный звонок и ни от чего не зависишь.
+
+<i>VPN WhiteList · Разработчик: @M1NATON</i>
 """
 
 
@@ -239,7 +244,9 @@ async def on_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         return
     if text == BTN_HELP:
         await update.message.reply_text(
-            INSTRUCTION.format(tf=cfg().get("testflight_url", "")), parse_mode="HTML"
+            INSTRUCTION.format(tf=cfg().get("testflight_url", "")),
+            parse_mode="HTML",
+            disable_web_page_preview=True,
         )
         return
     if text == BTN_STATUS:
@@ -301,7 +308,9 @@ async def on_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
     if data == "help_i":
         await q.message.reply_text(
-            INSTRUCTION.format(tf=cfg().get("testflight_url", "")), parse_mode="HTML"
+            INSTRUCTION.format(tf=cfg().get("testflight_url", "")),
+            parse_mode="HTML",
+            disable_web_page_preview=True,
         )
         return
 

@@ -2,6 +2,8 @@
 
 Простая панель управления и Telegram-бот для раздачи VPN-доступов через VK Calls и WireGuard.
 
+Проект основан на ядре [@cacggghp/vk-turn-proxy](https://github.com/cacggghp/vk-turn-proxy).
+
 **Основной функционал:**
 - 📱 Генерация iOS-приложением ссылок вида `vkturnproxy://`
 - 🔐 Управление VPN-пирами (WireGuard Peer'ы)
